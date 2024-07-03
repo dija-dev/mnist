@@ -1,0 +1,6 @@
+jupyter
+kaggle
+lightning
+torch
+torchinfo
+torchvision
