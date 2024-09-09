@@ -3,7 +3,9 @@ import lightning as L
 import torch
 from torch.utils.data import DataLoader, random_split
 from torchvision import transforms
-from torchvision.datasets import MNIST
+
+# 自作モジュール
+from datasets.dataset import MNISTWithIDs
 
 
 class MyDataModule(L.LightningDataModule):
@@ -17,14 +19,14 @@ class MyDataModule(L.LightningDataModule):
     # 必ず呼び出される関数
     def prepare_data(self):
         # download MNIST
-        MNIST(self.data_dir, train=True, download=True)
-        MNIST(self.data_dir, train=False, download=True)
+        MNISTWithIDs(self.data_dir, train=True, download=True)
+        MNISTWithIDs(self.data_dir, train=False, download=True)
 
     # 必ず呼び出される関数
     def setup(self, stage: str):
         # Assign train/val datasets for use in dataloaders
         if stage == "fit":
-            full = MNIST(self.data_dir, train=True, transform=self.transform)
+            full = MNISTWithIDs(self.data_dir, train=True, transform=self.transform)
             self.train, self.val = random_split(
                 dataset=full,
                 lengths=(0.9, 0.1),
@@ -33,14 +35,14 @@ class MyDataModule(L.LightningDataModule):
 
         # Assign test dataset for use in dataloader(s)
         if stage == "test":
-            self.test = MNIST(self.data_dir, train=False, transform=self.transform)
+            self.test = MNISTWithIDs(self.data_dir, train=False, transform=self.transform)
 
         if stage == "predict":
-            self.predict = MNIST(self.data_dir, train=False, transform=self.transform)
+            self.predict = MNISTWithIDs(self.data_dir, train=False, transform=self.transform)
 
     # Trainer.fit() 時に呼び出される
     def train_dataloader(self):
-        return DataLoader(self.train, batch_size=self.batch_size, shuffle=True)
+        return DataLoader(self.train, batch_size=self.batch_size, shuffle=True, drop_last=True)
 
     # Trainer.fit() 時に呼び出される
     def val_dataloader(self):

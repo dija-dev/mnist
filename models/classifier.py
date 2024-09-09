@@ -28,6 +28,10 @@ class Classifier(nn.Module):
             nn.Softmax(dim=1),
         )
 
+    @property
+    def output_dim(self) -> int:
+        return 10
+
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = self.conv_layer1(x)
         x = self.conv_layer2(x)

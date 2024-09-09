@@ -62,7 +62,7 @@ def main():
     )
 
     # LightningModule をロード
-    model = MyLightningModule(model_name=model_name, lr=lr)
+    model = MyLightningModule(model_name=model_name, lr=lr, td=True)
 
     # transform を定義
     transform = transforms.Compose([transforms.ToTensor()])
